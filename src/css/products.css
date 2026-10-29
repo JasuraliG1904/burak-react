@@ -1,0 +1,930 @@
+/* ===== Products page: Figma dizayniga moslangan ===== */
+/* Ranglar: qora #343434, qum #dbb98b, to'q sariq #f5a03a, binafsha #9c27b0, fon #f8f8ff */
+/* Shrift: public/index.html <head> ichiga qo'shing:
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> */
+
+.products-page {
+  --sans: "Poppins", "Inter", Arial, sans-serif;
+  --serif: "Times New Roman", Times, serif;
+  position: relative;
+  width: 100%;
+  height: auto;
+  background: #f8f8ff;
+}
+
+.products-page .products {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 60px;
+}
+
+/* ---------- 1. Sarlavha + qidiruv ---------- */
+
+.products-page .products .avatar-big-box {
+  position: relative;
+  width: 100%;
+  min-height: 90px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px; /* tepadan kesilmasin */
+}
+
+.products-page .products .avatar-big-box .title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 44px;
+  color: #343434;
+  text-align: center;
+}
+.products-page .products .single-search-big-box {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;      /* yonma-yon */
+  flex-wrap: nowrap;        /* pastga tushmasin */
+  align-items: center;
+  width: max-content;       /* ichidagilar sig'adigan kenglik */
+}
+
+.products-page .products .single-search-input {
+  flex: 0 0 auto;
+  width: 240px;
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  outline: none;
+  border-radius: 19px 0 0 19px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-family: var(--sans);
+  font-size: 13px;
+  color: #343434;
+}
+
+/* Agar .single-search-input MUI wrapper bo'lsa (ichida <input> bo'ladi) */
+.products-page .products .single-search-input input {
+  height: 100%;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 13px;
+}
+
+.products-page .products .single-search-input::placeholder,
+.products-page .products .single-search-input input::placeholder {
+  color: #8a8a8a;
+  opacity: 1;
+}
+
+.products-page .products .single-search-button {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
+  height: 38px;
+  margin-left: -24px;       /* inputning ustiga biroz chiqadi */
+  padding: 0 16px;
+  white-space: nowrap;
+  border-radius: 19px;
+  background: #343434;
+  color: #dbb98b;
+  font-family: var(--sans);
+  font-size: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.products-page .products .single-search-button svg {
+  font-size: 16px;
+}
+/* ---------- 2. NEW / PRICE / VIEWS (o'ngda) ---------- */
+
+.products-page .products .dishes-filter-section {
+  width: 100%;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.products-page .products .dishes-filter-box {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  margin-left: auto; /* o'ngga itaradi */
+}
+
+.products-page .products .dishes-filter-box .order {
+  min-width: 76px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- 3. Chapda kategoriyalar + o'ngda mahsulotlar ---------- */
+
+.products-page .products .list-category-section {
+  width: 100%;
+  margin-top: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.products-page .products .product-category {
+  flex-shrink: 0;
+  margin-top: 28px;
+}
+
+/* JSX tartibi Other â†’ Dish; column-reverse tufayli Dish tepada chiqadi */
+.products-page .products .category-main {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 12px;
+}
+
+.products-page .products .category-main button {
+  width: 40px;
+  min-width: 40px;
+  padding: 16px 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* ---------- 4. Mahsulotlar to'ri (4 ustun) ---------- */
+
+.products-page .products .product-wrapper {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0;
+  width: 100%;
+  height: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 24px;
+  row-gap: 36px;
+}
+
+.products-page .products .product-wrapper .no-data {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 160px;
+  font-family: var(--sans);
+  font-size: 18px;
+  color: #343434;
+}
+
+.products-page .products .product-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.products-page .products .product-img {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0 70px 0 0;
+  overflow: hidden;
+}
+
+/* "Normal size" nishoni */
+.products-page .products .product-sale {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: #f5a03a;
+  color: #ffffff;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 14px;
+}
+
+/* savat (binafsha kvadrat) va ko'rish (oq doira) tugmalari */
+.products-page .products .shop-btn,
+.products-page .products .view-btn {
+  position: absolute;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.products-page .products .shop-btn {
+  right: 56px;
+  width: 32px;
+  min-width: 32px;
+  border-radius: 6px;
+  background: #9c27b0;
+  color: #ffffff;
+}
+
+.products-page .products .shop-btn svg {
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.products-page .products .view-btn {
+  right: 12px;
+  width: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #343434;
+}
+
+.products-page .products .view-btn svg {
+  font-size: 18px;
+}
+
+.products-page .products .product-card:hover .shop-btn,
+.products-page .products .product-card:hover .view-btn,
+.products-page .products .shop-btn:focus-visible,
+.products-page .products .view-btn:focus-visible {
+  opacity: 1;
+}
+
+/* nom va narx */
+.products-page .products .product-desc {
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.products-page .products .product-title {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 24px;
+  color: #343434;
+}
+
+/* JSX da ichki div ning klassini product-price ga o'zgartiring */
+.products-page .products .product-price {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 24px;
+  color: #dbb98b;
+}
+
+.products-page .products .product-price svg {
+  font-size: 20px;
+}
+
+/* ---------- 5. Pagination (ortada) ---------- */
+
+.products-page .products .pagination-section {
+  width: 100%;
+  margin-top: 44px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.products-page .products .pagination-section .MuiPagination-ul {
+  justify-content: center;
+}
+
+/* ---------- Kichik ekranlar ---------- */
+
+@media (max-width: 1200px) {
+  .products-page .products .product-wrapper {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .products-page .products .product-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .products-page .products .single-search-big-box {
+    position: static;
+    transform: none;
+  }
+  .products-page .products .avatar-big-box {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+/* ===== Our Family Brands ===== */
+
+.products-page .products .brands-logo {
+  width: 100%;
+  margin-top: 32px;
+  padding: 48px 0 56px;
+  background: #ffffff;
+}
+
+.products-page .products .brands-logo .family-brands {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.products-page .products .brands-logo .category-title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 38px;
+  color: #343434;
+  text-align: center;
+}
+
+.products-page .products .brands-logo .brand-list {
+  width: 100%;
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.products-page .products .brands-logo .review-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  padding: 20px;
+  background: #f8f8ff;
+  border-radius: 0 50px 0 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.products-page .products .brands-logo .review-box img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ===== Our address ===== */
+
+.products-page .products .address {
+  width: 100%;
+  padding: 56px 0 72px;
+  background: #f8f8ff;
+}
+
+.products-page .products .address .address-area {
+  width: 100%;
+  align-items: center;
+}
+
+.products-page .products .address .title {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 38px;
+  color: #343434;
+  text-align: center;
+}
+
+.products-page .products .address iframe {
+  display: block;
+  border-radius: 0 50px 0 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 1200px) {
+  .products-page .products .brands-logo .brand-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .products-page .products .brands-logo .brand-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Chosen product (Product Detail) ===== */
+
+.products-page .chosen-product {
+  width: 100%;
+  height: auto;
+  padding: 32px 0 80px;
+  background: #f8f8ff;
+}
+
+.chosen-product .title {
+  width: 100%;
+  text-align: center;
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 42px;
+  color: #343434;
+}
+
+.chosen-product .product-container {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.chosen-product .chosen-product-slider {
+  flex: 0 0 50%;
+  max-width: 50%;
+  min-width: 0;
+}
+
+.chosen-product .swiper-area {
+  width: 100%;
+  border-radius: 0 70px 0 0;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  --swiper-navigation-color: #dbb98b;
+  --swiper-navigation-size: 26px;
+}
+
+.chosen-product .swiper-area .swiper-slide {
+  display: flex;
+}
+
+.chosen-product .slider-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.chosen-product .chosen-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chosen-product .info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.chosen-product .product-name {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 36px;
+  color: #343434;
+}
+
+.chosen-product .resto-name {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 22px;
+  color: #8a7a62;
+}
+
+.chosen-product .rating-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.chosen-product .rating-box .MuiRating-iconFilled {
+  color: #dbb98b;
+}
+
+.chosen-product .evaluation-box {
+  display: flex;
+  align-items: center;
+}
+
+.chosen-product .product-view {
+  display: flex;
+  align-items: center;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-desc {
+  margin: 6px 0;
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 24px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-price {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 30px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-price span:last-child {
+  color: #dbb98b;
+}
+
+.chosen-product .button-box {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.chosen-product .button-box button {
+  height: 40px;
+  padding: 0 28px;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 900px) {
+  .chosen-product .product-container {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .chosen-product .chosen-product-slider {
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* ===== Chosen product (Product Detail) ===== */
+
+.products-page .chosen-product {
+  width: 100%;
+  height: auto;
+  padding: 40px 0 100px;
+  background: #f8f8ff;
+}
+
+.chosen-product .title {
+  width: 100%;
+  text-align: center;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 56px;
+  color: #343434;
+}
+
+.chosen-product .product-container {
+  margin-top: 56px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 64px;
+}
+
+/* ---------- Slider ---------- */
+
+.chosen-product .chosen-product-slider {
+  flex: 0 0 50%;
+  max-width: 50%;
+  min-width: 0;
+}
+
+.chosen-product .swiper-area {
+  width: 100%;
+  border-radius: 0 90px 0 0; /* mahsulot kartalaridagi kabi */
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  --swiper-navigation-color: #dbb98b;
+  --swiper-navigation-size: 32px;
+}
+
+.chosen-product .swiper-area .swiper-slide {
+  display: flex;
+}
+
+.chosen-product .slider-image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---------- Ma'lumotlar ---------- */
+
+.chosen-product .chosen-product-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chosen-product .info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.chosen-product .product-name {
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 50px;
+  color: #343434;
+}
+
+.chosen-product .resto-name {
+  font-family: "Times New Roman", Times, serif;
+  font-size: 22px;
+  line-height: 26px;
+  color: #8a7a62;
+}
+
+.chosen-product .rating-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.chosen-product .rating-box .MuiRating-iconFilled {
+  color: #dbb98b;
+}
+
+.chosen-product .evaluation-box {
+  display: flex;
+  align-items: center;
+}
+
+.chosen-product .product-view {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-desc {
+  margin: 8px 0;
+  font-size: 20px;
+  line-height: 30px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-price {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 38px;
+  color: #343434;
+}
+
+.chosen-product .info-box .product-price span:last-child {
+  color: #dbb98b;
+}
+
+.chosen-product .button-box {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.chosen-product .button-box button {
+  height: 56px;
+  padding: 0 40px;
+  border-radius: 4px;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- Kichik ekranlar ---------- */
+
+@media (max-width: 900px) {
+  .chosen-product .product-container {
+    flex-direction: column;
+    gap: 32px;
+  }
+  .chosen-product .chosen-product-slider {
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+/** ChosenProduct **/
+
+.products-page .chosen-product {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background: #f8f8ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.products-page .chosen-product .product-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 80px;
+  margin-bottom: 150px;
+}
+
+.products-page .chosen-product .chosen-product-slider {
+  width: 48%;
+  height: 480px;
+  background: #ffffff;
+  box-shadow:
+    9px 13px 14px 5px rgba(0, 0, 0, 0.25),
+    inset -1px 2px 10px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.products-page .chosen-product .chosen-product-slider .swiper-area {
+  --swiper-navigation-color: #fff;
+  --swiper-pagination-color: #fff;
+  width: 100%;
+  height: 1020px;
+}
+
+.products-page
+  .chosen-product
+  .chosen-product-slider
+  .swiper-area
+  .slider-image {
+  width: 100%;
+  height: 100%;
+}
+
+.products-page .chosen-product .chosen-product-info {
+  padding: 30px 40px;
+  width: 49%;
+  height: 480px;
+  display: flex;
+  background: #ffffff;
+  box-shadow:
+    9px 13px 14px 5px rgba(0, 0, 0, 0.25),
+    inset -1px 2px 10px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+}
+
+.products-page .chosen-product .chosen-product-info .info-box {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.products-page .chosen-product .info-box .product-name {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 36px;
+  color: #000000;
+}
+
+.products-page .chosen-product .info-box .resto-name {
+  margin-top: 16px;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 15px;
+  color: #979797;
+}
+
+.products-page .chosen-product .info-box .rating-box {
+  margin-top: 20px;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.products-page .chosen-product .rating-box .star-box {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.products-page .chosen-product .rating-box .evaluation-box {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.products-page .chosen-product .rating-box .evaluation-box .product-view {
+  display: flex;
+  align-items: center;
+}
+
+.products-page .chosen-product .info-box .product-desc {
+  height: 112px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 22px;
+  color: #000000;
+}
+
+.products-page .chosen-product .info-box .product-price {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.products-page .chosen-product .product-price span {
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 22px;
+  color: #000000;
+}
+
+.products-page .chosen-product .button-box {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.products-page .chosen-product .button-box button {
+  width: 230px;
+  height: 44px;
+  font-family: "Poppins";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 22px;
+  color: #f8f8ff;
+}
+
+.products-page .chosen-product .title {
+  font-family: "Dancing Script";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 43px;
+  margin-top: 40px;
+}
