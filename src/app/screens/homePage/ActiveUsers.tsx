@@ -1,45 +1,57 @@
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, CardContent } from "@mui/material";
 import Card from "@mui/joy/Card";
 import { CssVarsProvider, Typography } from "@mui/joy";
 import CardOverflow from "@mui/joy/CardOverflow";
 import AspectRatio from "@mui/joy/AspectRatio";
+import CardCover from "@mui/joy/CardCover";
 
-const activeUsers = [
-  { memberNick: "Martin", memberImage: "/img/martin.webp" },
-  { memberNick: "Justin", memberImage: "/img/justin.webp" },
-  { memberNick: "Rose", memberImage: "/img/rose.webp" },
-  { memberNick: "Nusret", memberImage: "/img/nusret.webp" },
-];
 
+
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
+import { retrieveTopUsers } from "./selector";
+import { serverApi } from "../../../lib/config";
+import { Member } from "../../../lib/types/member";
+
+/** REDUX SLICE & SELECTOR **/
+const topUsersRetriever = createSelector(retrieveTopUsers, (topUsers) => ({
+  topUsers,
+}));
 export default function ActiveUsers() {
+  const { topUsers } = useSelector(topUsersRetriever);
   return (
-    <div className={"active-users-frame"}>
+    <div className="active-users-frame">
       <Container>
-        <Stack className={"main"}>
-          <Box className={"category-title"}>Active Users</Box>
-          <Stack className={"cards-frame"}>
-            <CssVarsProvider>
-              {activeUsers.length !== 0 ? (
-                activeUsers.map((ele, index) => {
-                  return (
-                    <Card key={index} variant="outlined" className={"card"}>
-                      <CardOverflow>
-                        <AspectRatio ratio="1">
-                          <img src={ele.memberImage} alt={ele.memberNick} />
-                        </AspectRatio>
-                      </CardOverflow>
-                      <CardOverflow variant="soft">
-                        <Typography className={"member-nickname"}>
-                          {ele.memberNick}
+        <Stack className="main">
+          <Box className="category-title">Active Users</Box>
+          <Stack className="cards-frame">
+            {topUsers.length !== 0 ? (
+              topUsers.map((member: Member) => {
+                const imagePath = `${serverApi}/${member.memberImage}`;
+                return (
+                  <CssVarsProvider key={member._id}>
+                    <Card className={"card"}>
+                      <CardCover>
+                        <img src={imagePath} alt="bu yerda member rasmi" />
+                      </CardCover>
+                      <CardCover className={"card-cover"} />
+                      <CardContent />
+                      <CardOverflow className={"member-nickname"}>
+                        <Typography
+                          level="h2"
+                          fontSize="lg"
+                          textColor="#000000eb"
+                        >
+                          {member.memberNick}
                         </Typography>
                       </CardOverflow>
                     </Card>
-                  );
-                })
-              ) : (
-                  <Box className="no-data">No Active Users!</Box>
-                )}
-            </CssVarsProvider>
+                  </CssVarsProvider>
+                );
+              })
+            ) : (
+              <Box className="no-data">No Active Users !</Box>
+            )}
           </Stack>
         </Stack>
       </Container>
