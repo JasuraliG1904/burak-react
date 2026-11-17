@@ -12,35 +12,61 @@ import Advertisement from "./Advertisement";
 import ActiveUsers from "./ActiveUsers";
 import Events from "./Events";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Dispatch } from "@reduxjs/toolkit";
-import { createSelector } from "reselect";
-import { setPopularDishes } from "./slice";
-import { retrievePopularDishes } from "./selector";
+import { setPopularDishes, setNewDishes, setTopUsers } from "./slice";
 import { Product } from "../../../lib/types/product";
+import ProductService from "../../services/ProductService";
+import { ProductCollection } from "../../../lib/enums/product.enum";
+import MemberService from "../../services/MemberService";
+import { Member } from "../../../lib/types/member";
 
 //Redux Slice & Selector
 const actionDispatch = (dispatch: Dispatch) => ({
   setPopularDishes: (data: Product[]) => dispatch(setPopularDishes(data)),
+  setNewDishes: (data: Product[]) => dispatch(setNewDishes(data)),
+  setTopUsers: (data: Member[]) => dispatch(setTopUsers(data))
 });
 
-const popularDishesRetriever = createSelector(
-  retrievePopularDishes,
-  (popularDishes) => ({
-    popularDishes,
-  })
-);
-
 export function HomePage() {
-  const { setPopularDishes } = actionDispatch(useDispatch());
-  const { popularDishes } = useSelector(popularDishesRetriever);
+  const { setPopularDishes, setNewDishes, setTopUsers } = actionDispatch(useDispatch());
   //Selectors: Redux Store => Data
 
   useEffect(() => {
     //Backend server daat request => Data
+    const product = new ProductService();
+    product
+      .getProducts({
+        page: 1,
+        limit: 4,
+        order: "productViews",
+        productCollection: ProductCollection.DISH,
+      })
+      //Slice: Data => Redux Store
+      .then((data) => {
+        console.log(data);
+        setPopularDishes(data);
+      })
+      .catch((err) => console.log(err));
 
-    //Slice: Data => Redux Store
-    
+    product
+      .getProducts({
+        page: 1,
+        limit: 4,
+        order: "createdAt",
+        productCollection: ProductCollection.DISH,
+      })
+      //Slice: Data => Redux Store
+      .then((data) => {
+        console.log(data);
+        setNewDishes(data);
+      })
+      .catch((err) => console.log(err));
+
+    const member = new MemberService();
+    member.getTopUsers().then((data)=>{
+      setTopUsers(data);
+    })
   }, []);
 
   return (
