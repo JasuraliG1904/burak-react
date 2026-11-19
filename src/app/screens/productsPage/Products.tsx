@@ -177,8 +177,7 @@
 //     );
 // }
 
-
-import React, { useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Box, Button, Container, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -190,6 +189,28 @@ import PaginationItem from "@mui/material/PaginationItem";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "@reduxjs/toolkit";
+import { createSelector } from "reselect";
+import { setProducts } from "./slice";
+import { retrieveProducts } from "./selector";
+import { Product, ProductInquiry } from "../../../lib/types/product";
+
+import "../../../css/home.css";
+import ProductService from "../../services/ProductService";
+import { ProductCollection } from "../../../lib/enums/product.enum";
+import { serverApi } from "../../../lib/config";
+
+/** REDUX SLICE & SELECTOR **/
+const actionDispatch = (dispatch: Dispatch) => ({
+  // setRestaurant: (data: Product[]) => dispatch(setRestaurant(data)),
+  setProducts: (data: Product[]) => dispatch(setProducts(data)),
+});
+
+const productsRetriver = createSelector(retrieveProducts, (products) => ({
+  products,
+}));
+
 // ChosenProduct ham shu turdan foydalanadi (state orqali keladi)
 export interface ProductItem {
   id: string;
@@ -200,16 +221,72 @@ export interface ProductItem {
   views: number;
 }
 
-const products: ProductItem[] = [
-  { id: "1", productName: "Cutlet", imagePath: "/img/cutlet.webp", images: ["/img/cutlet.webp", "/img/kebab-fresh.webp"], price: 12, views: 20 },
-  { id: "2", productName: "Kebab", imagePath: "/img/kebab-fresh.webp", images: ["/img/kebab-fresh.webp", "/img/kebab.webp"], price: 12, views: 20 },
-  { id: "3", productName: "Kebab", imagePath: "/img/kebab.webp", images: ["/img/kebab.webp", "/img/kebab-fresh.webp"], price: 12, views: 20 },
-  { id: "4", productName: "Lavash", imagePath: "/img/lavash.webp", images: ["/img/lavash.webp", "/img/cutlet.webp"], price: 12, views: 20 },
-  { id: "5", productName: "Lavash", imagePath: "/img/lavash.webp", images: ["/img/lavash.webp", "/img/kebab.webp"], price: 12, views: 20 },
-  { id: "6", productName: "Cutlet", imagePath: "/img/cutlet.webp", images: ["/img/cutlet.webp", "/img/lavash.webp"], price: 12, views: 20 },
-  { id: "7", productName: "Kebab", imagePath: "/img/kebab.webp", images: ["/img/kebab.webp", "/img/cutlet.webp"], price: 12, views: 20 },
-  { id: "8", productName: "Kebab", imagePath: "/img/kebab-fresh.webp", images: ["/img/kebab-fresh.webp", "/img/lavash.webp"], price: 12, views: 20 },
-];
+// const products: ProductItem[] = [
+//   {
+//     id: "1",
+//     productName: "Cutlet",
+//     imagePath: "/img/cutlet.webp",
+//     images: ["/img/cutlet.webp", "/img/kebab-fresh.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "2",
+//     productName: "Kebab",
+//     imagePath: "/img/kebab-fresh.webp",
+//     images: ["/img/kebab-fresh.webp", "/img/kebab.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "3",
+//     productName: "Kebab",
+//     imagePath: "/img/kebab.webp",
+//     images: ["/img/kebab.webp", "/img/kebab-fresh.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "4",
+//     productName: "Lavash",
+//     imagePath: "/img/lavash.webp",
+//     images: ["/img/lavash.webp", "/img/cutlet.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "5",
+//     productName: "Lavash",
+//     imagePath: "/img/lavash.webp",
+//     images: ["/img/lavash.webp", "/img/kebab.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "6",
+//     productName: "Cutlet",
+//     imagePath: "/img/cutlet.webp",
+//     images: ["/img/cutlet.webp", "/img/lavash.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "7",
+//     productName: "Kebab",
+//     imagePath: "/img/kebab.webp",
+//     images: ["/img/kebab.webp", "/img/cutlet.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+//   {
+//     id: "8",
+//     productName: "Kebab",
+//     imagePath: "/img/kebab-fresh.webp",
+//     images: ["/img/kebab-fresh.webp", "/img/lavash.webp"],
+//     price: 12,
+//     views: 20,
+//   },
+// ];
 
 const orders = ["New", "Price", "Views"];
 // JSX tartibi Other → Dish; CSS dagi column-reverse tufayli Dish tepada chiqadi
@@ -228,6 +305,58 @@ export default function Products() {
   const chooseProductHandler = (product: ProductItem) => {
     history.push(`/products/${product.id}`);
   };
+  const { setProducts } = actionDispatch(useDispatch());
+  const { products } = useSelector(productsRetriver);
+  const [productSearch, setProductSearch] = useState<ProductInquiry>({
+    page: 1,
+    limit: 2,
+    order: "createdAt",
+    productCollection: ProductCollection.DISH,
+    search: "",
+  });
+
+  useEffect(() => {
+    const product = new ProductService();
+    product
+      .getProducts(productSearch)
+      .then((data) => setProducts(data))
+      .catch((err) => console.log(err));
+  }, [productSearch]);
+
+  useEffect(() => {
+    if (searchText === "") {
+      productSearch.search = "";
+      setProductSearch({ ...productSearch });
+    }
+  }, [searchText]);
+
+  /** HANDLERS **/
+  const searchCollectionHandler = (collection: ProductCollection) => {
+    productSearch.page = 1;
+    productSearch.productCollection = collection;
+    setProductSearch({ ...productSearch });
+  };
+
+  const searchOrderHandler = (order: string) => {
+    productSearch.page = 1;
+    productSearch.order = order;
+    setProductSearch({ ...productSearch });
+  };
+
+  const searchProductHandler = () => {
+    productSearch.page = 1;
+    productSearch.search = searchText;
+    setProductSearch({ ...productSearch });
+  };
+
+  const paginationHandler = (e: ChangeEvent<any>, value: number) => {
+    productSearch.page = value;
+    setProductSearch({ ...productSearch });
+  };
+  const chooseDishHandler = (id: string) => {
+    console.log("productId:", id);
+    history.push(`/products/${id}`);
+  };
 
   return (
     <div className={"products"}>
@@ -243,12 +372,16 @@ export default function Products() {
                 placeholder={"Type here"}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") searchProductHandler();
+                }}
               />
               <Button
                 className={"single-search-button"}
                 variant={"contained"}
                 color={"primary"}
                 endIcon={<SearchIcon />}
+                onClick={searchProductHandler}
               >
                 Search
               </Button>
@@ -258,17 +391,40 @@ export default function Products() {
           {/* ---------- NEW / PRICE / VIEWS ---------- */}
           <Stack className={"dishes-filter-section"}>
             <Stack className={"dishes-filter-box"}>
-              {orders.map((o) => (
-                <Button
-                  key={o}
-                  variant={"contained"}
-                  color={order === o ? "primary" : "secondary"}
-                  className={"order"}
-                  onClick={() => setOrder(o)}
-                >
-                  {o}
-                </Button>
-              ))}
+              <Button
+                variant={"contained"}
+                className={"order"}
+                color={
+                  productSearch.order === "createdAt" ? "primary" : "secondary"
+                }
+                onClick={() => searchOrderHandler("createdAt")}
+              >
+                New
+              </Button>
+              <Button
+                variant={"contained"}
+                className={"order"}
+                color={
+                  productSearch.order === "productPrice"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => searchOrderHandler("productPrice")}
+              >
+                Price
+              </Button>
+              <Button
+                variant={"contained"}
+                className={"order"}
+                color={
+                  productSearch.order === "productViews"
+                    ? "primary"
+                    : "secondary"
+                }
+                onClick={() => searchOrderHandler("productViews")}
+              >
+                Views
+              </Button>
             </Stack>
           </Stack>
 
@@ -276,71 +432,129 @@ export default function Products() {
           <Stack className={"list-category-section"}>
             <Stack className={"product-category"}>
               <div className={"category-main"}>
-                {categories.map((c) => (
-                  <Button
-                    key={c}
-                    variant={"contained"}
-                    color={category === c ? "primary" : "secondary"}
-                    onClick={() => setCategory(c)}
-                  >
-                    {c}
-                  </Button>
-                ))}
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection === ProductCollection.OTHER
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.OTHER)
+                  }
+                >
+                  Other
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection ===
+                    ProductCollection.DESSERT
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.DESSERT)
+                  }
+                >
+                  Dessert
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection === ProductCollection.DRINK
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.DRINK)
+                  }
+                >
+                  Drink
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection === ProductCollection.SALAD
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.SALAD)
+                  }
+                >
+                  Salad
+                </Button>
+                <Button
+                  variant={"contained"}
+                  color={
+                    productSearch.productCollection === ProductCollection.DISH
+                      ? "primary"
+                      : "secondary"
+                  }
+                  onClick={() =>
+                    searchCollectionHandler(ProductCollection.DISH)
+                  }
+                >
+                  Dish
+                </Button>
               </div>
             </Stack>
 
-            <Stack className={"product-wrapper"}>
+            <Stack className="product-wrapper">
               {products.length !== 0 ? (
-                products.map((product) => (
-                  <Stack key={product.id} className={"product-card"}>
+                products.map((product: Product) => {
+                  const imagePath = `${serverApi}/${product.productImages[0]}`;
+                  const sizeVolume =
+                    product.productCollection === ProductCollection.DRINK
+                      ? product.productVolume + " litre"
+                      : product.productSize + " size";
+                  return (
                     <Stack
-                      className={"product-img"}
-                      sx={{
-                        backgroundImage: `url(${product.imagePath})`,
-                        cursor: "pointer",
-                      }}
-                      onClick={() => chooseProductHandler(product)}
+                      key={product._id}
+                      className="product-card"
+                      onClick={() => chooseDishHandler(product._id)}
                     >
-                      <div className={"product-sale"}>Normal size</div>
-
-                      {/* joylashuvi (right) CSS da berilgan */}
-                      <Button
-                        className={"shop-btn"}
-                        onClick={(e) => e.stopPropagation()}
+                      <Stack
+                        className="product-img"
+                        sx={{ backgroundImage: `url(${imagePath})` }}
                       >
-                        <img
-                          src={"/icons/shopping-cart.svg"}
-                          alt={"Savatga qo'shish"}
-                        />
-                      </Button>
-
-                      <Button
-                        className={"view-btn"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Badge badgeContent={product.views} color="secondary">
-                          <RemoveRedEyeIcon
-                            sx={{
-                              color: product.views ? "gray" : "white",
-                            }}
+                        <div className="product-sale">{sizeVolume}</div>
+                        <Button className="shop-btn">
+                          <img
+                            src="/icons/shopping-cart.svg"
+                            alt=""
+                            style={{ display: "flex" }}
                           />
-                        </Badge>
-                      </Button>
+                        </Button>
+                        <Button className="view-btn">
+                          <Badge
+                            badgeContent={product.productViews}
+                            color="primary"
+                          >
+                            <RemoveRedEyeIcon
+                              sx={{
+                                color:
+                                  product.productViews === 0 ? "gray" : "white",
+                              }}
+                            />
+                          </Badge>
+                        </Button>
+                      </Stack>
+                      <Box className="product-desc">
+                        <span className="product-title">
+                          {product.productName}
+                        </span>
+                        <div className="product-price">
+                          <MonetizationOnIcon />
+                          {product.productPrice.toFixed(2)} $
+                        </div>
+                      </Box>
                     </Stack>
-
-                    <Box className={"product-desc"}>
-                      <span className={"product-title"}>
-                        {product.productName}
-                      </span>
-                      <div className={"product-price"}>
-                        <MonetizationOnIcon />
-                        {product.price}
-                      </div>
-                    </Box>
-                  </Stack>
-                ))
+                  );
+                })
               ) : (
-                <Box className={"no-data"}>Products are not available!</Box>
+                <Box className="no-data">Products are not available!</Box>
               )}
             </Stack>
           </Stack>
@@ -348,9 +562,12 @@ export default function Products() {
           {/* ---------- Pagination (ortada) ---------- */}
           <Stack className={"pagination-section"}>
             <Pagination
-              count={3}
-              page={page}
-              onChange={(_, value) => setPage(value)}
+              count={
+                products.length !== 0
+                  ? productSearch.page + 1
+                  : productSearch.page
+              }
+              page={productSearch.page}
               renderItem={(item) => (
                 <PaginationItem
                   components={{
@@ -361,6 +578,7 @@ export default function Products() {
                   color={"secondary"}
                 />
               )}
+              onChange={paginationHandler}
             />
           </Stack>
         </Stack>
@@ -403,4 +621,3 @@ export default function Products() {
     </div>
   );
 }
-
