@@ -4,7 +4,7 @@ import { Product } from "./product";
 // React App State
 export interface AppRootState {
   homePage: HomePageState;
-  productPage: ProductsPageState;
+  productsPage: ProductsPageState;
   //   memberPage: MemberPageState;
   //   orderPage: OrderPageState;
 }
