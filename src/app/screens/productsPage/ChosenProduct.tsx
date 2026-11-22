@@ -22,6 +22,7 @@ import ProductService from "../../services/ProductService";
 import MemberService from "../../services/MemberService";
 import { Member } from "../../../lib/types/member";
 import { serverApi } from "../../../lib/config";
+import { CartItem } from "../../../lib/types/search";
 
 /** REDUX SLICE & SELECTOR **/
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -38,7 +39,13 @@ const chosenProductRetriever = createSelector(
 const restaurantRetriver = createSelector(retrieveRestaurant, (restaurant) => ({
   restaurant,
 }));
-export default function ChosenProduct() {
+
+interface ChosenProductsProps {
+  onAdd: (item: CartItem) => void;
+}
+
+export default function ChosenProduct(props: ChosenProductsProps) {
+  const { onAdd } = props;
   const { productId } = useParams<{ productId: string }>();
   const { setRestaurant, setChosenProduct } = actionDispatch(useDispatch());
   const { chosenProduct } = useSelector(chosenProductRetriever);
@@ -105,7 +112,22 @@ export default function ChosenProduct() {
               <span>${chosenProduct?.productPrice?.toFixed(2)}</span>
             </div>
             <div className={"button-box"}>
-              <Button variant="contained">Add To Basket</Button>
+              <Button
+                variant="contained"
+                onClick={(e) => {
+                  console.log("BUTTON PRESSED");
+                  onAdd({
+                    _id: chosenProduct._id,
+                    quantity: 1,
+                    name: chosenProduct.productName,
+                    price: chosenProduct.productPrice,
+                    image: chosenProduct.productImages[0],
+                  });
+                  e.stopPropagation();
+                }}
+              >
+                Add To Basket
+              </Button>
             </div>
           </Box>
         </Stack>

@@ -200,6 +200,7 @@ import "../../../css/home.css";
 import ProductService from "../../services/ProductService";
 import { ProductCollection } from "../../../lib/enums/product.enum";
 import { serverApi } from "../../../lib/config";
+import { CartItem } from "../../../lib/types/search";
 
 /** REDUX SLICE & SELECTOR **/
 const actionDispatch = (dispatch: Dispatch) => ({
@@ -210,6 +211,10 @@ const actionDispatch = (dispatch: Dispatch) => ({
 const productsRetriver = createSelector(retrieveProducts, (products) => ({
   products,
 }));
+
+interface ProductsProps {
+  onAdd: (item: CartItem) => void;
+}
 
 // ChosenProduct ham shu turdan foydalanadi (state orqali keladi)
 export interface ProductItem {
@@ -295,7 +300,8 @@ const categories = ["Other", "Dessert", "Drink", "Salad", "Dish"];
 const MAP_SRC =
   "https://www.google.com/maps?q=41.322703,69.226725&z=15&output=embed";
 
-export default function Products() {
+export default function Products(props:ProductsProps) {
+  const {onAdd} =props;
   const history = useHistory();
   const [order, setOrder] = useState<string>("New");
   const [category, setCategory] = useState<string>("Dish");
@@ -520,7 +526,19 @@ export default function Products() {
                         sx={{ backgroundImage: `url(${imagePath})` }}
                       >
                         <div className="product-sale">{sizeVolume}</div>
-                        <Button className="shop-btn">
+                        <Button className="shop-btn"
+                        onClick={(e)=>{
+                          console.log("BUTTON PRESSED");
+                          onAdd({
+                            _id:product._id,
+                            quantity:1,
+                            name:product.productName,
+                            price:product.productPrice,
+                            image:product.productImages[0],
+                          })
+                          e.stopPropagation()
+                        }}
+                        >
                           <img
                             src="/icons/shopping-cart.svg"
                             alt=""

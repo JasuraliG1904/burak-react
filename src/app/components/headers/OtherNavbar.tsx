@@ -1,8 +1,41 @@
-import { Box, Container, Stack, Button } from "@mui/material";
+import React from "react";
+import { Logout } from "@mui/icons-material";
+import { Box, Container, Stack, Button, MenuItem, ListItemIcon, Menu } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { serverApi } from "../../../lib/config";
+import { CartItem } from "../../../lib/types/search";
+import { useGlobals } from "../../hooks/useGlobals";
 import Basket from "./Basket";
-export default function OtherNavbar() {
-  const authMember = null; // TODO: Replace with actual authentication logic
+
+interface OtherNavbarrops {
+  cartItems: CartItem[];
+  onAdd: (item: CartItem) => void;
+  onRemove: (item: CartItem) => void;
+  onDelete: (item: CartItem) => void;
+  onDeleteAll: () => void;
+  setSignupOpen: (isOpen: boolean) => void;
+  setLoginOpen: (isOpen: boolean) => void;
+  anchorEl: HTMLElement | null;
+  handleLogoutClick: (e: React.MouseEvent<HTMLElement>) => void;
+  handleCloseLogout: () => void;
+  handleLogoutRequest: () => void;
+}
+export default function OtherNavbar(props: OtherNavbarrops) {
+  const {
+    cartItems,
+    onAdd,
+    onRemove,
+    onDelete,
+    onDeleteAll,
+    setSignupOpen,
+    anchorEl,
+    handleLogoutClick,
+    handleCloseLogout,
+    handleLogoutRequest,
+    setLoginOpen,
+  } = props;
+  const { authMember } = useGlobals(); // TODO: Replace with actual authentication logic
+
   return (
     <div className="other-navbar">
       <Container className="navbar-container">
@@ -41,20 +74,77 @@ export default function OtherNavbar() {
                 Help
               </NavLink>
             </Box>
-            <Basket />
+            <Basket
+              cartItems={cartItems}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onDelete={onDelete}
+              onDeleteAll={onDeleteAll}
+            />
             {!authMember ? (
               <Box>
-                <Button variant="contained" className="login-button">
+                <Button
+                  variant="contained"
+                  className="login-button"
+                  onClick={() => setLoginOpen(true)}
+                >
                   Login
                 </Button>
               </Box>
             ) : (
               <img
                 className="user-avatar"
-                src={"/icons/default-user.svg"}
+                src={
+                  authMember?.memberImage
+                    ? `${serverApi}/${authMember.memberImage}`
+                    : "/icons/default-user.svg"
+                }
                 aria-haspopup={"true"}
+                onClick={handleLogoutClick}
               />
             )}
+               <Menu
+              id="account-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleCloseLogout}
+              onClick={handleCloseLogout}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: "visible",
+                  filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                  mt: 1.5,
+                  "& .MuiAvatar-root": {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  "&:before": {
+                    content: '""',
+                    display: "block",
+                    position: "absolute",
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: "background.paper",
+                    transform: "translateY(-50%) rotate(45deg)",
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <MenuItem onClick={handleLogoutRequest}>
+                <ListItemIcon>
+                  <Logout fontSize="small" style={{ color: "blue" }} />
+                </ListItemIcon>
+                Logout
+              </MenuItem>
+            </Menu>
           </Stack>
         </Stack>
       </Container>
